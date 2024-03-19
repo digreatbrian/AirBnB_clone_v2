@@ -1,15 +1,17 @@
 #!/usr/bin/python3
 """ Review module for the HBNB project """
+from models.base_model import BaseModel
+from airbnb.settings import MODELS_DIR
+from airbnb.settings import DB_MODELS_DIR
+from airbnb._import import _import
 
-from sqlalchemy import Column, String, ForeignKey
-import models
-from models.base_model import BaseModel, Base
 
+class Review(BaseModel):
+    """ Review classto store review information """
+    place_id = ""
+    user_id = ""
+    text = ""
 
-class Review(BaseModel, Base):
-    """ A review to store review information """
+if MODELS_DIR == DB_MODELS_DIR:
+    Review = _import(MODELS_DIR + f".review.Review")
 
-    __tablename__ = 'reviews'
-    place_id = Column(String(60), ForeignKey('places.id'), nullable=False)
-    user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
-    text = Column(String(1024), nullable=False)
