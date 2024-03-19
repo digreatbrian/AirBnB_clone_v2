@@ -3,9 +3,10 @@
 import unittest
 from models.base_model import BaseModel
 from models import storage
+from airbnb.settings import STORAGE_ENGINE, STORAGE_ENGINES
 import os
 
-
+@unittest.skipIf((STORAGE_ENGINE == STORAGE_ENGINES["dbstorage"]), "Tests are only available for DBStorage ")
 class test_fileStorage(unittest.TestCase):
     """ Class to test the file storage method """
 

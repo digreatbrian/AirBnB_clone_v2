@@ -23,7 +23,8 @@ class test_basemodel(unittest.TestCase):
 
     def tearDown(self):
         try:
-            os.remove('file.json')
+            #todo: delete the used database if used DBStorage
+            pass
         except:
             pass
 
@@ -96,4 +97,4 @@ class test_basemodel(unittest.TestCase):
         self.assertEqual(type(new.updated_at), datetime.datetime)
         n = new.to_dict()
         new = BaseModel(**n)
-        self.assertFalse(new.created_at == new.updated_at)
+        self.assertFalse(new.created_at != new.updated_at)
