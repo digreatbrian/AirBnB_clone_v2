@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+""" module to import an object from str """
+
+
 def _import(what: str):
     '''Import something absolutely with the relative path
     eg::

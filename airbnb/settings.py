@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+""" settings module """
 import os
 
 
@@ -10,8 +12,6 @@ STORAGE_ENGINE = STORAGE_ENGINES["dbstorage"] if os.getenv('HBNB_TYPE_STORAGE') 
 
 FILE_MODELS_DIR = "models"
 DB_MODELS_DIR = "models.db_models"
-
-ENV = "dev"
 
 if STORAGE_ENGINE == STORAGE_ENGINES["dbstorage"]:
     MODELS_DIR = DB_MODELS_DIR

@@ -5,9 +5,9 @@ import unittest
 import datetime
 from uuid import UUID
 import json
-import os
+from airbnb.settings import STORAGE_ENGINE, STORAGE_ENGINES
 
-
+@unittest.skipIf((STORAGE_ENGINE == STORAGE_ENGINES["dbstorage"]), "Tests not compatible with DBStorage ")
 class test_basemodel(unittest.TestCase):
     """ """
 

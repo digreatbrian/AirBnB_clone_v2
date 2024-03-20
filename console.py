@@ -11,6 +11,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+from airbnb.settings import STORAGE_ENGINE, STORAGE_ENGINES
 
 
 class HBNBCommand(cmd.Cmd):
@@ -161,6 +162,9 @@ class HBNBCommand(cmd.Cmd):
             return
         new_instance = HBNBCommand.classes[classname](**kwargs)
         storage.save()
+
+        if STORAGE_ENGINE == STORAGE_ENGINES['dbstorage']:
+            storage.new(new_instance)
         print(new_instance.id)
         storage.save()
 
@@ -193,7 +197,10 @@ class HBNBCommand(cmd.Cmd):
 
         key = c_name + "." + c_id
         try:
-            print(storage._FileStorage__objects[key])
+            if STORAGE_ENGINE == STORAGE_ENGINES["dbstorage"]:
+              print(storage.all()[key])
+            else:
+                print(storage._FileStorage__objects[key])
         except KeyError:
             print("** no instance found **")
 
@@ -225,7 +232,10 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            if STORAGE_ENGINE == STORAGE_ENGINES['dbstorage']:
+                storage.delete(storage.all()[key])
+            else:
+                del(storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -244,11 +254,12 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
+            
+            for k, v in storage.all(args).items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 print_list.append(str(v))
 
         print(print_list)
@@ -261,8 +272,13 @@ class HBNBCommand(cmd.Cmd):
     def do_count(self, args):
         """Count current number of class instances"""
         count = 0
-        for k, v in storage._FileStorage__objects.items():
-            if args == k.split('.')[0]:
+        if args:
+            if args == "State":
+                args = "State"
+            print(len(storage.all(args)))
+            return
+        else:
+            for k, v in storage.all().items():
                 count += 1
         print(count)
 
@@ -330,8 +346,8 @@ class HBNBCommand(cmd.Cmd):
 
             args = [att_name, att_val]
 
-        # retrieve dictionary of current objects
-        new_dict = storage.all()[key]
+        # retrieve the found instance using id
+        instance = storage.all()[key]
 
         # iterate through attr names and values
         for i, att_name in enumerate(args):
@@ -349,9 +365,9 @@ class HBNBCommand(cmd.Cmd):
                     att_val = HBNBCommand.types[att_name](att_val)
 
                 # update dictionary with name, value pair
-                new_dict.__dict__.update({att_name: att_val})
-
-        new_dict.save()  # save updates to file
+                instance.__dict__.update({att_name: att_val})
+        
+        storage.update(instance)
 
     def help_update(self):
         """ Help information for the update class """
