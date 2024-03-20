@@ -12,5 +12,5 @@ class City(BaseModel):
     name = ""
 
 if MODELS_DIR == DB_MODELS_DIR:
-    User = _import(MODELS_DIR + f".city.City")
+    City = _import(MODELS_DIR + f".city.City")
 

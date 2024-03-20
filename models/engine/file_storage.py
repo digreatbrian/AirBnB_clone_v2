@@ -16,11 +16,8 @@ class FileStorage:
     __objects = {}
     all_classes = {'BaseModel': BaseModel, 'User': User,
                    'State': State, 'City': City, 'Amenity': Amenity,
-                   'Place': Place, 'Review': Review}
-
-    def all(self):
-        """Returns a dictionary of models currently in storage"""
-        return FileStorage.__objects
+                   'Place': Place, 'Review': Review
+                   }
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -37,13 +34,21 @@ class FileStorage:
         """Returns the list of objects of one type of class, returns a dictionary of __object"""
         all_return = {}
 
-        # if cls is valid
-        if cls:
+        # if cls is valid and is an object
+        if cls and not isinstance(cls, str):
             if cls.__name__ in self.all_classes:
                 # copy objects of cls to temp dict
                 for key, val in self.__objects.items():
                     if key.split('.')[0] == cls.__name__:
                         all_return.update({key: val})
+
+        elif isinstance(cls, str) and cls:
+            if cls in self.all_classes:
+                # copy objects of cls to temp dict
+                for key, val in self.__objects.items():
+                    if key.split('.')[0] == cls:
+                        all_return.update({key: val})
+
         else:  # if cls is none
             all_return = self.__objects
 
@@ -57,6 +62,10 @@ class FileStorage:
             for key, val in temp.items():
                 temp[key] = val.to_dict()
             json.dump(temp, f)
+
+    def update(self, instance):
+        """save an existing instance with updated fields"""
+        instance.save()  # save updates to file
 
     def reload(self):
         """Loads storage dictionary from file"""
@@ -81,3 +90,5 @@ class FileStorage:
                         self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
+
+
