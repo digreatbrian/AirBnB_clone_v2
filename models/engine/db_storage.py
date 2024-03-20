@@ -35,6 +35,11 @@ class DBStorage:
         """Create SQLAlchemy engine
         """
         # create engine
+        print('mysql+mysqldb://{}:{}@{}:3306/{}'.format(getenv('HBNB_MYSQL_USER'),
+                                             getenv('HBNB_MYSQL_PWD'),
+                                             getenv('HBNB_MYSQL_HOST'),
+                                             getenv('HBNB_MYSQL_DB')))
+        
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:3306/{}'.
                                       format(getenv('HBNB_MYSQL_USER'),
                                              getenv('HBNB_MYSQL_PWD'),

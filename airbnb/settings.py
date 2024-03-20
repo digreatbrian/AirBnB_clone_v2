@@ -1,8 +1,12 @@
+import os
+
+
 STORAGE_ENGINES = {
     "filestorage": "models.engine.file_storage.FileStorage",
     "dbstorage": "models.engine.db_storage.DBStorage"
 }
-STORAGE_ENGINE = STORAGE_ENGINES["dbstorage"]
+
+STORAGE_ENGINE = STORAGE_ENGINES["dbstorage"] if os.getenv('HBNB_TYPE_STORAGE') == 'db' else STORAGE_ENGINES["filestorage"]
 
 FILE_MODELS_DIR = "models"
 DB_MODELS_DIR = "models.db_models"

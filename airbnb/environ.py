@@ -29,9 +29,15 @@ def set_db_test_environ():
 
 def load_environ():
     '''Loads the environment variables if not set by default'''
-    if ENV == "dev":
-        if list(DB_DEV_ENVIRON.keys())[0] not in os.environ:
-            set_db_dev_environ()
+    if 'HBNB_TYPE_STORAGE' not in os.environ:
+        #obviously lets use filestorage if not set
+        os.environ['HBNB_TYPE_STORAGE'] = 'file'
     else:
-        if list(DB_TEST_ENVIRON.keys())[0] not in os.environ:
-            set_db_test_environ()
+        #if set
+        if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+            if ENV == "dev":
+                if list(DB_DEV_ENVIRON.keys())[0] not in os.environ:
+                    set_db_dev_environ()
+            else:
+                if list(DB_TEST_ENVIRON.keys())[0] not in os.environ:
+                    set_db_test_environ()

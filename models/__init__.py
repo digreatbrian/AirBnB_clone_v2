@@ -8,13 +8,15 @@ from airbnb.environ import load_environ
 load_environ()
 
 from .amenity import Amenity
-from .base_model import Base
 from .city import City
 from .place import Place
 from .state import State
 from .user import User
 
-print("LOADED ENV")
+try:
+    from .base_model import Base
+except ImportError:
+    pass
 
-storage = _import(STORAGE_ENGINE)()
+storage = _import(STORAGE_ENGINE)() #loading storage engine
 storage.reload()
