@@ -1,14 +1,28 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
-from models.base_model import BaseModel
-from airbnb.settings import MODELS_DIR
-from airbnb.settings import DB_MODELS_DIR
-from airbnb._import import _import
+"""
+    module containing Amenity class
+"""
+from models.base_model import BaseModel, Base
+from models.city import City
+from models.user import User
+from models.place import place_amenity
+from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from os import environ
+
+storage_engine = environ.get("HBNB_TYPE_STORAGE")
 
 
-class Amenity(BaseModel):
-    name = ""
+class Amenity(BaseModel, Base):
+    """
+        Amenity class
+    """
 
-if MODELS_DIR == DB_MODELS_DIR:
-    Amenity = _import(MODELS_DIR + f".amenity.Amenity")
-
+    if (storage_engine == "db"):
+        __tablename__ = "amenities"
+        name = Column(String(128), nullable=False)
+        place_amenities = relationship(
+            "Place",
+            secondary=place_amenity, back_populates="amenities")
+    else:
+        name = ""
