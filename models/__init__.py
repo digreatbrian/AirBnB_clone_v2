@@ -1,22 +1,35 @@
 #!/usr/bin/python3
-"""This module instantiates an object of class FileStorage or DBStorage depending of env variables"""
-from airbnb.settings import STORAGE_ENGINE
-from airbnb._import import _import
-from airbnb.environ import load_environ
+"""
+    instantiates the storage system, and defines
+    dummy classes for further use
+"""
+from models.engine.file_storage import FileStorage
+from models.engine.db_storage import DBStorage
 
-#loading envronment
-load_environ()
+from models.base_model import BaseModel
+from models.city import City
+from models.review import Review
+from models.state import State
+from models.user import User
+from models.place import Place
+from models.amenity import Amenity
 
-from .amenity import Amenity
-from .city import City
-from .place import Place
-from .state import State
-from .user import User
+from os import environ
 
-try:
-    from .base_model import Base
-except ImportError:
-    pass
+dummy_classes = {"BaseModel": BaseModel, "User": User,
+                 "Review": Review, "City": City,
+                 "State": State, "Place": Place,
+                 "Amenity": Amenity}
 
-storage = _import(STORAGE_ENGINE)() #loading storage engine
-storage.reload()
+dummy_tables = {"states": State, "cities": City,
+                "users": User, "places": Place,
+                "reviews": Review, "amenities": Amenity}
+
+storage_engine = environ.get("HBNB_TYPE_STORAGE")
+
+if (storage_engine == "db"):
+    storage = DBStorage()
+    storage.reload()
+else:
+    storage = FileStorage()
+    storage.reload()
