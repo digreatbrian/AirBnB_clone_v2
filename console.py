@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 """ Console Module """
 import cmd
-from operator import le
 import sys
 from models.base_model import BaseModel
-from models.__init__ import storage
+from models import storage
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -58,7 +57,7 @@ class HBNBCommand(cmd.Cmd):
             # isolate and validate <command>
             _cmd = pline[pline.find('.') + 1:pline.find('(')]
             if _cmd not in HBNBCommand.dot_cmds:
-                raise Exception
+                raise TypeError("error")
 
             # if parantheses contain arguments, parse them
             pline = pline[pline.find('(') + 1:pline.find(')')]
@@ -76,7 +75,7 @@ class HBNBCommand(cmd.Cmd):
                 if pline:
                     # check for *args or **kwargs
                     if pline[0] == '{' and pline[-1] == '}'\
-                            and type(eval(pline)) == dict:
+                            and isinstance(eval(pline), dict):
                         _args = pline
                     else:
                         _args = pline.replace(',', '')
@@ -96,7 +95,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_quit(self, command):
         """ Method to exit the HBNB console"""
-        exit()
+        sys.exit()
 
     def help_quit(self):
         """ Prints the help documentation for quit  """
@@ -113,7 +112,6 @@ class HBNBCommand(cmd.Cmd):
 
     def emptyline(self):
         """ Overrides the emptyline method of CMD """
-        pass
 
     def do_create(self, args):
         """ Create an object of any class"""
@@ -140,7 +138,7 @@ class HBNBCommand(cmd.Cmd):
 
                     #removing double quotes if so
                     value = value.strip('"')
-                    
+
                     #convert to appropriate types eg, int | float
                     if value.isdigit():
                         value = int(value)
@@ -149,13 +147,13 @@ class HBNBCommand(cmd.Cmd):
                         value = float(value)
                     except ValueError:
                         pass
-                    
+
                     kwargs[key] = value
-        
+
         if not classname:
             print("** class name missing **")
             return
-        
+
         elif classname not in HBNBCommand.classes:
             print(classname)
             print("** class doesn't exist **")
@@ -254,7 +252,7 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            
+
             for k, v in storage.all(args).items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
@@ -283,7 +281,7 @@ class HBNBCommand(cmd.Cmd):
         print(count)
 
     def help_count(self):
-        """ """
+        """ help count """
         print("Usage: count <class_name>")
 
     def do_update(self, args):
@@ -366,7 +364,7 @@ class HBNBCommand(cmd.Cmd):
 
                 # update dictionary with name, value pair
                 instance.__dict__.update({att_name: att_val})
-        
+
         storage.update(instance)
 
     def help_update(self):

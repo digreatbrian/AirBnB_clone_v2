@@ -17,12 +17,12 @@ class test_fileStorage(unittest.TestCase):
             del_list.append(key)
         for key in del_list:
             del storage._FileStorage__objects[key]
-
+            
     def tearDown(self):
         """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
-        except:
+        except OSError:
             pass
 
     def test_obj_list_empty(self):
@@ -72,7 +72,7 @@ class test_fileStorage(unittest.TestCase):
 
     def test_reload_empty(self):
         """ Load from an empty file """
-        with open('file.json', 'w') as f:
+        with open('file.json', 'w', encoding="utf-8") as f:
             pass
         with self.assertRaises(ValueError):
             storage.reload()
