@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-""" Module for testing file storage"""
+"""
+    tests for FileStorage
+"""
 import unittest
 from models.base_model import BaseModel
 from models import storage
@@ -7,7 +9,7 @@ from airbnb.settings import STORAGE_ENGINE, STORAGE_ENGINES
 import os
 
 @unittest.skipIf((STORAGE_ENGINE == STORAGE_ENGINES["dbstorage"]), "Tests not compatible with DBStorage ")
-class test_fileStorage(unittest.TestCase):
+class TestFileStorage(unittest.TestCase):
     """ Class to test the file storage method """
 
     def setUp(self):
@@ -17,12 +19,12 @@ class test_fileStorage(unittest.TestCase):
             del_list.append(key)
         for key in del_list:
             del storage._FileStorage__objects[key]
-            
+
     def tearDown(self):
         """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
-        except OSError:
+        except:
             pass
 
     def test_obj_list_empty(self):
@@ -72,7 +74,7 @@ class test_fileStorage(unittest.TestCase):
 
     def test_reload_empty(self):
         """ Load from an empty file """
-        with open('file.json', 'w', encoding="utf-8") as f:
+        with open('file.json', 'w') as f:
             pass
         with self.assertRaises(ValueError):
             storage.reload()
@@ -108,3 +110,4 @@ class test_fileStorage(unittest.TestCase):
         from models.engine.file_storage import FileStorage
         print(type(storage))
         self.assertEqual(type(storage), FileStorage)
+
