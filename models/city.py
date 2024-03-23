@@ -1,16 +1,20 @@
 #!/usr/bin/python3
-""" City Module for HBNB project """
-from models.base_model import BaseModel
-from airbnb.settings import MODELS_DIR
-from airbnb.settings import DB_MODELS_DIR
-from airbnb._import import _import
+"""This is the city class"""
+import models
+from models.base_model import BaseModel, Base
+from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.orm import relationship
 
 
-class City(BaseModel):
-    """ The city class, contains state ID and name """
-    state_id = ""
-    name = ""
-
-if MODELS_DIR == DB_MODELS_DIR:
-    City = _import(MODELS_DIR + f".city.City")
+class City(BaseModel, Base):
+    """This is the class for City
+    Attributes:
+        state_id: The state id
+        name: input name
+    """
+    # initialize class for file/db storage type
+    __tablename__ = 'cities'
+    name = Column(String(128), nullable=False)
+    state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
+    places = relationship('Place', cascade='all, delete', backref='cities')
 

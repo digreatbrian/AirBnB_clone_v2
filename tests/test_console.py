@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 """test for console to make it start working"""
 import unittest
+import sys
 from io import StringIO
 from console import HBNBCommand
-import sys
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -55,6 +55,3 @@ class TestConsole(unittest.TestCase):
         self.assertEqual(temp_out.getvalue(), '** class doesn\'t exist **\n')
         temp_out.close()
         sys.stdout = sys.__stdout__
-
-if __name__ == "__main__":
-    unittest.main()

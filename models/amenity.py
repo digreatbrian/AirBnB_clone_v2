@@ -1,14 +1,15 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
-from models.base_model import BaseModel
-from airbnb.settings import MODELS_DIR
-from airbnb.settings import DB_MODELS_DIR
-from airbnb._import import _import
+"""This is the amenity class"""
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
+from models.base_model import BaseModel, Base
 
 
-class Amenity(BaseModel):
-    name = ""
-
-if MODELS_DIR == DB_MODELS_DIR:
-    Amenity = _import(MODELS_DIR + f".amenity.Amenity")
+class Amenity(BaseModel, Base):
+    """This is the class for Amenity
+    Attributes:
+        name: input name
+    """
+    __tablename__ = 'amenities'
+    name = Column(String(128), nullable=False)
 

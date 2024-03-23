@@ -2,9 +2,9 @@
 """
     test amenities
 """
+import unittest
 from models.base_model import BaseModel
 from models.amenity import Amenity
-import unittest
 
 
 class test_Amenity(unittest.TestCase):
@@ -40,6 +40,3 @@ class test_Amenity(unittest.TestCase):
             test attributes
         """
         self.assertTrue(hasattr(self.dummy_amenity, "name"))
-
-if __name__ == "__main__":
-    unittest.main()

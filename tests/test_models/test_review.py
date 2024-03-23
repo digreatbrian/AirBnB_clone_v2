@@ -46,6 +46,3 @@ class test_Review(unittest.TestCase):
         self.assertTrue(hasattr(self.dummy_review, "text"))
         self.assertTrue(hasattr(self.dummy_review, "user_id"))
         self.assertTrue(hasattr(self.dummy_review, "place_id"))
-
-if __name__ == "__main__":
-    unittest.main()
