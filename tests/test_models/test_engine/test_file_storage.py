@@ -3,12 +3,14 @@
     tests for FileStorage
 """
 import unittest
+import os
 from models.base_model import BaseModel
 from models import storage
 from airbnb.settings import STORAGE_ENGINE, STORAGE_ENGINES
-import os
 
-@unittest.skipIf((STORAGE_ENGINE == STORAGE_ENGINES["dbstorage"]), "Tests not compatible with DBStorage ")
+
+@unittest.skipIf((STORAGE_ENGINE == STORAGE_ENGINES["dbstorage"]),
+                 "Tests not compatible with DBStorage ")
 class TestFileStorage(unittest.TestCase):
     """ Class to test the file storage method """
 
@@ -24,7 +26,7 @@ class TestFileStorage(unittest.TestCase):
         """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
-        except:
+        except Exception:
             pass
 
     def test_obj_list_empty(self):
@@ -108,6 +110,4 @@ class TestFileStorage(unittest.TestCase):
     def test_storage_var_created(self):
         """ FileStorage object storage created """
         from models.engine.file_storage import FileStorage
-        print(type(storage))
         self.assertEqual(type(storage), FileStorage)
-

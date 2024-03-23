@@ -8,7 +8,9 @@ STORAGE_ENGINES = {
     "dbstorage": "models.engine.db_storage.DBStorage"
 }
 
-STORAGE_ENGINE = STORAGE_ENGINES["dbstorage"] if os.getenv('HBNB_TYPE_STORAGE') == 'db' else STORAGE_ENGINES["filestorage"]
+STORAGE_ENGINE = STORAGE_ENGINES["dbstorage"] \
+      if os.getenv('HBNB_TYPE_STORAGE') == 'db' \
+      else STORAGE_ENGINES["filestorage"]
 
 FILE_MODELS_DIR = "models"
 DB_MODELS_DIR = "models.db_models"

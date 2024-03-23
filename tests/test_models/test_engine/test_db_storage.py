@@ -34,5 +34,3 @@ class TestDBStorage(unittest.TestCase):
         self.assertTrue(isinstance(self.dummy._DBStorage__engine, Engine))
         self.assertTrue(self.dummy._DBStorage__session is None)
 
-if __name__ == "__main__":
-    unittest.main()

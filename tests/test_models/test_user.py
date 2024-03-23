@@ -46,6 +46,3 @@ class test_User(unittest.TestCase):
         self.assertTrue(hasattr(self.dummy_user, "password"))
         self.assertTrue(hasattr(self.dummy_user, "first_name"))
         self.assertTrue(hasattr(self.dummy_user, "last_name"))
-
-if __name__ == "__main__":
-    unittest.main()

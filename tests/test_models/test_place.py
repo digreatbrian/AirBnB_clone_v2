@@ -62,6 +62,3 @@ class test_Place(unittest.TestCase):
         self.assertTrue(hasattr(self.dummy_city, "latitude"))
         self.assertTrue(hasattr(self.dummy_city, "longitude"))
         self.assertTrue(hasattr(self.dummy_city, "amenity_ids"))
-
-if __name__ == "__main__":
-    unittest.main()
