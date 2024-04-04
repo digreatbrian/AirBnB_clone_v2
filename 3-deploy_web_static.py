@@ -14,51 +14,104 @@ env.user = "ubuntu"
 
 
 def do_pack():
-    """Create a tar gzipped archive of the directory web_static."""
-    # obtain the current date and time
-    now = datetime.now().strftime("%Y%m%d%H%M%S")
+    """Fabric script that generates a .tgz archive
+    from the contents of the web_static folder of
+    your AirBnB Clone repo
+    """
 
-    # Construct path where archive will be saved
-    archive_path = "versions/web_static_{}.tgz".format(now)
+    """Check if version dir exits:"""
+    path = "versions"
+    if not os.path.exists(path):
+        os.makedirs(path)
 
-    # use fabric function to create directory if it doesn't exist
-    local("mkdir -p versions")
+    """Get the current time and date"""
+    currentDateAndTime = datetime.now()
+    archiveTime = currentDateAndTime.strftime("%Y%m%d%H%M%S")
 
-    # Use tar command to create a compresses archive
-    archived = local("tar -cvzf {} web_static".format(archive_path))
+    """Naming of the archive file"""
+    name_of_archive = "web_static_{}.tgz".format(archiveTime)
 
-    # Check archive Creation Status
-    if archived.return_code != 0:
-        return None
-    else:
+    archive_path = "{}/{}".format(path, name_of_archive)
+
+    content = "web_static"
+
+    """Using of the tar command"""
+    result = local("tar -cvzf {} {}".format(archive_path, content))
+
+    if result.succeeded:
         return archive_path
+
+    return None
 
 
 def do_deploy(archive_path):
-    '''use os module to check for valid file path'''
-    if os.path.exists(archive_path):
-        archive = archive_path.split('/')[1]
-        a_path = "/tmp/{}".format(archive)
-        folder = archive.split('.')[0]
-        f_path = "/data/web_static/releases/{}/".format(folder)
+    """Distributes an archive to your web servers,
+    using the function do_deploy
+    Args:
+        archive_path: path to the archive
+    Return:
+        True if sucessfully and False otherwise.
+    """
 
-        put(archive_path, a_path)
-        run("mkdir -p {}".format(f_path))
-        run("tar -xzf {} -C {}".format(a_path, f_path))
-        run("rm {}".format(a_path))
-        run("mv -f {}web_static/* {}".format(f_path, f_path))
-        run("rm -rf {}web_static".format(f_path))
-        run("rm -rf /data/web_static/current")
-        run("ln -s {} /data/web_static/current".format(f_path))
+    """If archive_path does not exit"""
+    if not os.path.exists(archive_path):
+        return False
+
+    try:
+        archived_file = archive_path[9:]
+
+        """Without the extension."""
+        file_without_ext = archived_file[:-4]
+
+        """Full path without the extension of the file"""
+        file_dir = "/data/web_static/releases/{}/".format(
+                file_without_ext)
+
+        """Retrive the file name"""
+        archived_file = "/tmp/" + archive_path[9:]
+
+        """Upload to /tmp/ directory of the server"""
+        put(archive_path, "/tmp/")
+
+        """Create the directory & Uncompress the file"""
+        run("mkdir -p {}".format(file_dir))
+
+        run(
+                "tar -xvf {} -C {}".format(
+                    archived_file,
+                    file_dir
+                    )
+                )
+
+        """Remove thr archived file"""
+        run("rm {}".format(archived_file))
+
+        run("mv {}web_static/* {}".format(file_dir, file_dir))
+
+        run("rm -rf {}web_static".format(file_dir))
+
+        run("rm -rf {}".format("/data/web_static/current"))
+
+        """Create a symbolic link"""
+        run("ln -s {} /data/web_static/current".format(file_dir))
+
+        print("New version deployed!")
+
         return True
-    return False
+    except Exception as e:
+        return False
 
 
 def deploy():
     """
-    Create and archive and get its path
+    Creates and distributes an archive to your web servers
     """
+
     archive_path = do_pack()
+
     if archive_path is None:
         return False
-    return do_deploy(archive_path)
+
+    deployed_result = do_deploy(archive_path)
+
+    return deployed_result
