@@ -14,45 +14,58 @@ env.user = "ubuntu"
 
 
 def do_deploy(archive_path):
-    '''Deploy the web_static content to the web servers'''
+    """Distributes an archive to your web servers,
+    using the function do_deploy
+    Args:
+        archive_path: path to the archive
+    Return:
+        True if sucessfully and False otherwise.
+    """
+
+    """If archive_path does not exit"""
     if not os.path.exists(archive_path):
-        print("Archive does not exist.")
         return False
 
     try:
-        # Extract archive filename and folder name
-        archive_filename = os.path.basename(archive_path)
-        folder_name = archive_filename.split('.')[0]
+        archived_file = archive_path[9:]
 
-        # Remote paths
-        remote_tmp_path = "/tmp/"
-        remote_release_path = "/data/web_static/releases/{}/".format(folder_name)
-        remote_current_path = "/data/web_static/current"
+        """Without the extension."""
+        file_without_ext = archived_file[:-4]
 
-        # Upload archive to the server
-        put(archive_path, remote_tmp_path)
+        """Full path without the extension of the file"""
+        file_dir = "/data/web_static/releases/{}/".format(
+                file_without_ext)
 
-        # Create necessary directories
-        run("mkdir -p {}".format(remote_release_path))
+        """Retrive the file name"""
+        archived_file = "/tmp/" + archive_path[9:]
 
-        # Extract archive
-        run("tar -xzf {} -C {}".format(remote_tmp_path + archive_filename, remote_release_path))
+        """Upload to /tmp/ directory of the server"""
+        put(archive_path, "/tmp/")
 
-        # Delete archive from server
-        run("rm -f {}".format(remote_tmp_path + archive_filename))
+        """Create the directory & Uncompress the file"""
+        run("mkdir -p {}".format(file_dir))
 
-        # Move contents to proper location
-        run("mv -u {}/web_static/* {}".format(remote_release_path, remote_release_path))
+        run(
+                "tar -xvf {} -C {}".format(
+                    archived_file,
+                    file_dir
+                    )
+                )
 
-        # Remove symbolic link if exists
-        run("rm -rf {}".format(remote_current_path))
+        """Remove thr archived file"""
+        run("rm {}".format(archived_file))
 
-        # Create new symbolic link
-        run("ln -s {} {}".format(remote_release_path, remote_current_path))
+        run("mv {}web_static/* {}".format(file_dir, file_dir))
+
+        run("rm -rf {}web_static".format(file_dir))
+
+        run("rm -rf {}".format("/data/web_static/current"))
+
+        """Create a symbolic link"""
+        run("ln -s {} /data/web_static/current".format(file_dir))
 
         print("New version deployed!")
-        return True
 
+        return True
     except Exception as e:
-        print("Deployment failed:", str(e))
         return False
